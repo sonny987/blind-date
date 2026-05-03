@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blind Date Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background:
+      radial-gradient(ellipse 130% 55% at 50% 72%, rgba(251,146,60,0.32) 0%, transparent 60%),
+      linear-gradient(180deg,
+        #160429 0%,
+        #3b1060 12%,
+        #7a2342 26%,
+        #bf3d0a 44%,
+        #e8780c 57%,
+        #f5a623 67%,
+        #fce588 77%,
+        #fff4d5 88%,
+        #fff8f0 100%
+      );
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* Sun glow */
+  .sun {
+    position:fixed;
+    top:52%; left:50%;
+    transform:translate(-50%,-50%);
+    width:680px; height:340px;
+    background: radial-gradient(ellipse, rgba(255,210,60,0.28) 0%, rgba(234,88,12,0.14) 35%, transparent 65%);
+    pointer-events:none; z-index:0;
+    animation: sunpulse 7s ease-in-out infinite;
+  }
+  .blob-tl {
+    position:fixed; top:-120px; left:-120px;
+    width:480px; height:480px;
+    background: radial-gradient(circle, rgba(120,35,130,0.22) 0%, transparent 65%);
+    border-radius:50%; pointer-events:none; z-index:0;
+    animation: blobA 10s ease-in-out infinite;
+  }
+  .blob-tr {
+    position:fixed; top:8%; right:-90px;
+    width:360px; height:360px;
+    background: radial-gradient(circle, rgba(50,40,170,0.16) 0%, transparent 65%);
+    border-radius:50%; pointer-events:none; z-index:0;
+    animation: blobB 13s ease-in-out infinite;
+  }
+
+  @keyframes sunpulse { 0%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)} 50%{opacity:.75;transform:translate(-50%,-50%) scale(1.07)} }
+  @keyframes blobA    { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(44px,60px) scale(1.1)} }
+  @keyframes blobB    { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-28px,38px) scale(1.08)} }
+
+  .poster {
+    position:relative; z-index:1;
+    max-width:960px; margin:0 auto;
+    padding:58px 28px 80px;
+  }
+
+  /* HEADER */
+  .header { text-align:center; margin-bottom:50px; animation:fadeDown .8s ease both; }
+
+  .tag {
+    display:inline-block;
+    background:linear-gradient(90deg,#c2410c,#ea580c,#f59e0b);
+    border-radius:50px; padding:7px 24px;
+    font-size:11px; font-weight:700; letter-spacing:2.5px;
+    text-transform:uppercase; color:#fff; margin-bottom:24px;
+    box-shadow:0 4px 22px rgba(234,88,12,.5);
+  }
+
+  h1 {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(3rem,7.5vw,5.2rem);
+    line-height:1.08; color:#fff;
+    text-shadow:0 2px 32px rgba(251,146,60,.65), 0 0 80px rgba(245,158,11,.3);
+    margin-bottom:18px;
+  }
+
+  .subtitle {
+    font-size:clamp(1rem,2.4vw,1.18rem);
+    color:rgba(255,228,170,.92);
+    max-width:500px; margin:0 auto 12px;
+    line-height:1.65; text-shadow:0 1px 8px rgba(0,0,0,.3);
+  }
+
+  .age-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(245,158,11,.18);
+    border:1.5px solid rgba(245,158,11,.5);
+    border-radius:50px; padding:9px 24px; margin-top:16px;
+    font-size:.92rem; font-weight:500; color:#fbbf24;
+    text-shadow:0 1px 6px rgba(0,0,0,.25);
+  }
+
+  /* INTRO */
+  .intro-box {
+    background:rgba(255,248,235,.84);
+    border:1.5px solid rgba(251,191,36,.4);
+    backdrop-filter:blur(18px);
+    border-radius:24px; padding:32px 38px; margin-bottom:48px;
+    line-height:1.85; font-size:1.06rem; color:#2d1000;
+    box-shadow:0 8px 50px rgba(234,88,12,.14), 0 2px 12px rgba(0,0,0,.07);
+    animation:fadeUp .7s .2s ease both;
+  }
+  .intro-box p { margin-bottom:14px; }
+  .intro-box p:last-child { margin-bottom:0; }
+
+  .hl-fire { background:linear-gradient(90deg,#c2410c,#ea580c); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-weight:700; }
+  .hl-gold { background:linear-gradient(90deg,#d97706,#92400e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-weight:700; }
+
+  .section-title {
+    font-family:'Playfair Display',serif; font-size:1.65rem;
+    margin-bottom:30px; text-align:center; font-style:italic;
+    color:rgba(255,220,130,.95);
+    text-shadow:0 2px 12px rgba(0,0,0,.3);
+  }
+
+  /* GRID */
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(268px,1fr)); gap:22px; margin-bottom:64px; }
+
+  .card {
+    background:rgba(255,248,235,.87);
+    border:1.5px solid rgba(255,200,90,.32);
+    backdrop-filter:blur(14px); border-radius:22px;
+    padding:26px 22px 22px; position:relative; overflow:hidden;
+    transition:transform .3s ease, box-shadow .3s ease;
+    animation:fadeUp .6s ease both;
+    box-shadow:0 4px 24px rgba(180,80,0,.1);
+    color:#1c0a00;
+  }
+  .card:hover { transform:translateY(-7px); box-shadow:0 20px 55px rgba(180,80,0,.2); }
+
+  .card::before {
+    content:''; position:absolute; top:0; left:0; right:0;
+    height:4px; border-radius:22px 22px 0 0;
+  }
+
+  .card.c1 { background:linear-gradient(155deg,rgba(194,65,12,.08) 0%,rgba(255,248,235,.92) 40%); }
+  .card.c1::before { background:linear-gradient(90deg,#c2410c,#ea580c); }
+
+  .card.c2 { background:linear-gradient(155deg,rgba(234,88,12,.09) 0%,rgba(255,248,235,.92) 40%); }
+  .card.c2::before { background:linear-gradient(90deg,#ea580c,#f59e0b); }
+
+  .card.c3 { background:linear-gradient(155deg,rgba(120,35,130,.09) 0%,rgba(255,248,235,.92) 40%); }
+  .card.c3::before { background:linear-gradient(90deg,#7c2d88,#c2410c); }
+
+  .card.c4 { background:linear-gradient(155deg,rgba(245,158,11,.1) 0%,rgba(255,248,235,.92) 40%); }
+  .card.c4::before { background:linear-gradient(90deg,#f59e0b,#ea580c); }
+
+  .card.c5 { background:linear-gradient(155deg,rgba(50,40,163,.08) 0%,rgba(255,248,235,.92) 40%); }
+  .card.c5::before { background:linear-gradient(90deg,#3730a3,#7c2d88); }
+
+  .card-emoji { font-size:2.2rem; margin-bottom:10px; display:block; }
+
+  .card-title {
+    font-family:'Playfair Display',serif;
+    font-size:1.18rem; font-weight:700; margin-bottom:3px; color:#1c0a00;
+  }
+
+  .card-place { font-size:.76rem; color:#a05820; margin-bottom:10px; font-weight:500; }
+
+  .card-vibe {
+    display:inline-block; font-size:.71rem; font-weight:700;
+    letter-spacing:.8px; text-transform:uppercase;
+    border-radius:6px; padding:3px 10px; margin-bottom:12px;
+  }
+  .card.c1 .card-vibe { background:rgba(194,65,12,.1);  color:#c2410c; }
+  .card.c2 .card-vibe { background:rgba(234,88,12,.1);  color:#b45309; }
+  .card.c3 .card-vibe { background:rgba(120,35,130,.1); color:#7c2d88; }
+  .card.c4 .card-vibe { background:rgba(245,158,11,.1); color:#92400e; }
+  .card.c5 .card-vibe { background:rgba(50,40,163,.1);  color:#3730a3; }
+
+  .card-desc { font-size:.88rem; color:#4a2800; line-height:1.62; margin-bottom:14px; }
+
+  .card-date {
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:.76rem; background:rgba(180,83,9,.07);
+    border-radius:8px; padding:4px 10px; color:#92400e; margin-bottom:14px;
+  }
+
+  .qr-wrap {
+    background:#fff; border-radius:12px; padding:8px; display:inline-block;
+    box-shadow:0 2px 14px rgba(180,80,0,.1);
+  }
+  .qr-label { font-size:.68rem; color:#b06030; margin-top:7px; }
+
+  /* FOOTER */
+  .footer { text-align:center; animation:fadeUp .7s .6s ease both; }
+
+  .footer-line {
+    font-family:'Playfair Display',serif; font-size:1.45rem; font-style:italic;
+    color:rgba(255,218,120,.92); text-shadow:0 2px 10px rgba(0,0,0,.25); margin-bottom:20px;
+  }
+
+  .footer-hearts { font-size:1.6rem; letter-spacing:7px; animation:pulse 2.3s ease-in-out infinite; }
+
+  @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-28px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(28px)}  to{opacity:1;transform:translateY(0)} }
+
+  .card:nth-child(1){animation-delay:.07s} .card:nth-child(2){animation-delay:.14s}
+  .card:nth-child(3){animation-delay:.21s} .card:nth-child(4){animation-delay:.28s}
+  .card:nth-child(5){animation-delay:.35s} .card:nth-child(6){animation-delay:.42s}
+  .card:nth-child(7){animation-delay:.49s} .card:nth-child(8){animation-delay:.56s}
+  .card:nth-child(9){animation-delay:.63s}
+
+  /* OVERLAY */
+  #ov {
+    display:none; position:fixed; inset:0; z-index:9999;
+    background:linear-gradient(160deg,#160429 0%,#7a2342 35%,#ea580c 65%,#fce588 100%);
+    align-items:center; justify-content:center;
+    flex-direction:column; text-align:center; padding:40px;
+  }
+  #ov.show { display:flex; }
+  .ov-emoji { font-size:3.8rem; margin-bottom:16px; }
+  .ov-title {
+    font-family:'Playfair Display',serif; font-size:2.2rem; margin-bottom:10px; color:#fff;
+    text-shadow:0 2px 20px rgba(251,146,60,.7);
+  }
+  .ov-act { font-size:1.15rem; font-weight:600; margin-bottom:8px; color:#fde68a; }
+  .ov-sub { color:rgba(255,228,170,.85); font-size:.97rem; margin-bottom:42px; max-width:380px; line-height:1.75; }
+
+  .btn-yes {
+    background:linear-gradient(135deg,#c2410c,#ea580c,#f59e0b);
+    border:none; border-radius:50px; color:#fff;
+    font-family:'DM Sans',sans-serif; font-size:1.08rem; font-weight:700;
+    padding:17px 46px; cursor:pointer;
+    box-shadow:0 8px 30px rgba(234,88,12,.5);
+    transition:transform .2s, box-shadow .2s;
+    margin-bottom:18px; display:block;
+  }
+  .btn-yes:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(234,88,12,.6); }
+
+  .btn-no {
+    background:transparent;
+    border:1.5px solid rgba(255,218,120,.3); border-radius:50px;
+    color:rgba(255,218,120,.6);
+    font-family:'DM Sans',sans-serif; font-size:.9rem;
+    padding:10px 28px; cursor:pointer; transition:border-color .2s;
+  }
+  .btn-no:hover { border-color:rgba(255,218,120,.6); }
+</style>
+</head>
+<body>
+
+<div class="sun"></div>
+<div class="blob-tl"></div>
+<div class="blob-tr"></div>
+
+<div class="poster">
+
+  <div class="header">
+    <div class="tag">🌅 Blind Date · Odense</div>
+    <h1>Jeg tør<br>hvis du tør.</h1>
+    <p class="subtitle">En invitation til dig, der er klar til noget<br>lidt mere ægte end et swipe.</p>
+    <div class="age-badge">🌄 Til dig der er 28–34 år og klar på et eventyr</div>
+  </div>
+
+  <div class="intro-box">
+    <p>Hej smukke. Jeg ved godt, det her er lidt skørt — men de bedste historier starter altid lidt uventet. 💌</p>
+    <p>Jeg er en <span class="hl-fire">far</span> der elsker livet, grin og ægte forbindelser. Jeg søger dig, der <span class="hl-gold">er åben for en fremtid med børn</span> — og som tør tage en chance på noget ukendt.</p>
+    <p>Herunder finder du <strong>8 mulige dates</strong> i Odense. Scan QR-koden ved den aktivitet der kalder på dig — og se hvad der sker. 🎲</p>
+  </div>
+
+  <p class="section-title">— Vælg din date —</p>
+
+  <div class="grid">
+
+    <div class="card c1">
+      <span class="card-emoji">🍽️</span>
+      <div class="card-title">Romantisk middag</div>
+      <div class="card-place">Storms Pakhus · Den Smagfulde · Arak · Roomkøkken — Odense</div>
+      <div class="card-vibe">🌶 Varm stemning</div>
+      <div class="card-desc">Vi vælger sammen — street food på havnen, intim dansk-arabisk fusion på Arak, fisk & skaldyr på Den Smagfulde, eller noget helt fjerde. Det handler om selskabet, ikke stedet.</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr1"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+    <div class="card c2">
+      <span class="card-emoji">🧗</span>
+      <div class="card-title">Klatring</div>
+      <div class="card-place">Gravity Odense · Bouldering</div>
+      <div class="card-vibe">🔥 Adrenalinkick</div>
+      <div class="card-desc">Bouldering for begyndere — ingen udstyr, ingen erfaring nødvendig. Fingrene, væggen og et sæt øjne der hepper. Det er helt okay at falde ned i mine arme. 😄</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr2"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+    <div class="card c3">
+      <span class="card-emoji">💃</span>
+      <div class="card-title">Danseaften</div>
+      <div class="card-place">Dansestudio · Odense</div>
+      <div class="card-vibe">✨ Tæt & rytmisk</div>
+      <div class="card-desc">Salsa, bachata eller swing — vi vælger sammen. Den slags date, hvor man automatisk kommer tæt på hinanden og finder ud af om kemien er der. 🔥</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr3"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+    <div class="card c4">
+      <span class="card-emoji">🦒</span>
+      <div class="card-title">Zoo-dag</div>
+      <div class="card-place">Odense Zoo · Sdr. Boulevard</div>
+      <div class="card-vibe">🌿 Nysgerrig & sjov</div>
+      <div class="card-desc">En dag i zooen handler om mere end dyr — det handler om at se hinanden reagere uforbeholdent. Hvem bliver mest begejstret for pingvinerne? (Det er mig.)</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr4"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+    <div class="card c5">
+      <span class="card-emoji">🎸</span>
+      <div class="card-title">Live koncert</div>
+      <div class="card-place">Odeon · Posten · Grøn · Tinderbox · Cotton Club — Fyn</div>
+      <div class="card-vibe">🎶 Magi & nærvær</div>
+      <div class="card-desc">Vi vælger hvad der spiller — Tinderbox under åben himmel, en intim aften på Posten, storslået på Odeon, eller sommerstemning til Grøn. Uanset scene: livemusik, god stemning og en undskyldning til at stå tæt. Den slags aftener husker man.</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr5"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+    <div class="card c2">
+      <span class="card-emoji">🛶</span>
+      <div class="card-title">Kajaktur på åen</div>
+      <div class="card-place">Odense Å · Naturskønt</div>
+      <div class="card-vibe">🌊 Friluft & eventyr</div>
+      <div class="card-desc">Paddle langs Odense Å i frisk luft med udsigt over noget af det smukkeste i byen. Bonus: man finder hurtigt ud af om man er et godt team. 🏆</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr6"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+    <div class="card c1">
+      <span class="card-emoji">☕</span>
+      <div class="card-title">Kaffe & loppemarked</div>
+      <div class="card-place">Odense midtby</div>
+      <div class="card-vibe">🍂 Ægte & afslappet</div>
+      <div class="card-desc">God kaffe, sjove fund og de bedste samtaler sker altid uden en menu imellem jer. Den slags date der føles som man har kendt hinanden i årevis.</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr7"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+    <div class="card c3">
+      <span class="card-emoji">🎳</span>
+      <div class="card-title">Bowling & cocktails</div>
+      <div class="card-place">Strike Bowling · Odense</div>
+      <div class="card-vibe">🏆 Let konkurrence</div>
+      <div class="card-desc">Det er en date, ikke EM — men konkurrencen er på. Taberen køber næste runde. Grin, dårlige kast og cocktails: den perfekte opskrift på en god aften.</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr8"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+    <div class="card c4">
+      <span class="card-emoji">🍷</span>
+      <div class="card-title">Vin, tapas & hygge</div>
+      <div class="card-place">Vintapperiet / Storms Pakhus · Odense</div>
+      <div class="card-vibe">🕯️ Intim & sanselig</div>
+      <div class="card-desc">Et bord, et glas vin, et udvalg af små retter — og al den tid i verden. Ingen stress, ingen dagsorden. Bare to mennesker der finder ud af om snakken kan bære hele aftenen. Spoiler: det kan den.</div>
+      <div class="card-date">📅 Dato aftales sammen</div>
+      <div class="qr-wrap" id="qr9"></div>
+      <div class="qr-label">Scan for at acceptere</div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p class="footer-line">"Det eneste du risikerer er en rigtig god aften."</p>
+    <div class="footer-hearts">🧡 🖤 🧡</div>
+  </div>
+
+</div>
+
+<div id="ov">
+  <div class="ov-emoji" id="ov-emoji">💌</div>
+  <div class="ov-title">Accepterer du?</div>
+  <div class="ov-act" id="ov-act"></div>
+  <div class="ov-sub">
+    Er du klar til en blind date? 🌅<br>
+    <span style="font-size:.82rem;opacity:.7;">Vi finder en dato der passer jer begge.</span>
+  </div>
+  <button class="btn-yes" id="btn-yes">Ja, jeg er med! 🎉</button>
+  <button class="btn-no"  id="btn-no">Måske en anden gang</button>
+</div>
+
+<script>
+const _p=[52,48,50,48,49,49,56,53,57,51].map(c=>String.fromCharCode(c)).join('');
+const acts=[
+  {id:"qr1",n:"Romantisk middag — Odense (sted aftales)",e:"🍽️"},
+  {id:"qr2",n:"Klatring — Gravity Odense",e:"🧗"},
+  {id:"qr3",n:"Danseaften — Odense",e:"💃"},
+  {id:"qr4",n:"Zoo-dag — Odense Zoo",e:"🦒"},
+  {id:"qr5",n:"Live koncert — Posten Odense",e:"🎸"},
+  {id:"qr6",n:"Kajaktur — Odense Å",e:"🛶"},
+  {id:"qr7",n:"Kaffe & loppemarked — Odense",e:"☕"},
+  {id:"qr8",n:"Bowling & cocktails — Strike",e:"🎳"},
+  {id:"qr9",n:"Vin, tapas & hygge — Odense",e:"🍷"},
+];
+const base=window.location.href.split('#')[0];
+acts.forEach(a=>{
+  new QRCode(document.getElementById(a.id),{
+    text:base+"#date="+btoa(unescape(encodeURIComponent(JSON.stringify({n:a.n,e:a.e})))),
+    width:112,height:112,colorDark:"#1c0a00",colorLight:"#ffffff",
+    correctLevel:QRCode.CorrectLevel.M
+  });
+});
+
+function checkHash(){
+  const h=window.location.hash;
+  if(!h.startsWith("#date=")){document.getElementById('ov').classList.remove('show');return;}
+  try{
+    const d=JSON.parse(decodeURIComponent(escape(atob(h.replace("#date=","")))));
+    document.getElementById('ov-emoji').textContent=d.e||"💌";
+    document.getElementById('ov-act').textContent=d.n||"";
+    document.getElementById('ov').classList.add('show');
+  }catch(e){}
+}
+
+document.getElementById('btn-yes').addEventListener('click',()=>{
+  let name="en aktivitet";
+  try{const d=JSON.parse(decodeURIComponent(escape(atob(window.location.hash.replace("#date=","")))));name=d.n;}catch(e){}
+  window.location.href="sms:+"+_p+"?body="+encodeURIComponent("Hej! Jeg accepterer din blind date-invitation! 🎉 Jeg valgte: "+name+". Glæder mig til at høre fra dig! 🌅");
+  setTimeout(()=>{
+    document.getElementById('ov').innerHTML=`<div class="ov-emoji">🎊</div><div style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:12px;color:#fde68a;text-shadow:0 2px 20px rgba(251,146,60,.7);">Det sker!</div><div style="color:rgba(255,228,170,.85);font-size:1rem;line-height:1.8;max-width:360px;">Din besked er på vej. Vi ses snart! 🌅</div>`;
+  },800);
+});
+document.getElementById('btn-no').addEventListener('click',()=>{window.location.hash='';document.getElementById('ov').classList.remove('show');});
+window.addEventListener('DOMContentLoaded',checkHash);
+window.addEventListener('hashchange',checkHash);
+</script>
+</body>
+</html>
