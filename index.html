@@ -305,7 +305,7 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   }
 
-  .scan-hint {
+  .date-card { cursor: pointer; }
     font-size: .65rem; letter-spacing: 1.5px;
     text-transform: uppercase;
     color: rgba(255,255,255,0.2);
@@ -560,12 +560,21 @@
   .print-btn:hover { transform: scale(1.04); box-shadow: 0 10px 34px rgba(253,41,123,0.5); }
 
   /* ══════════════════════════════════════
-     PRINT — præcis én side A4 og A3
+     PRINT — fylder hele arket A4 og A3
   ══════════════════════════════════════ */
   @media print {
-    @page { size: A4 portrait; margin: 0; }
+    @page { size: auto; margin: 0mm; }
 
-    html, body { margin: 0; padding: 0; background: white; }
+    html {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+    }
+
+    body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      background: white;
+    }
 
     /* Skjul ALT undtagen print-siden */
     .bg-mesh, .floating-heart, .hero, .section,
@@ -573,10 +582,38 @@
 
     #print-page {
       display: flex !important;
-      width: 210mm;
-      min-height: 297mm;
-      page-break-after: avoid;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
       overflow: hidden;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    #print-page .pp-grid {
+      flex: 1;
+      align-content: stretch;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    #print-page .pp-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #print-page .pp-card-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #print-page .pp-desc {
+      flex: 1;
     }
   }
     from { opacity:0; transform:translateY(-20px); }
@@ -641,7 +678,7 @@
   <!-- CARDS -->
   <div class="cards-grid">
 
-    <div class="date-card c1">
+    <div class="date-card c1" onclick="triggerDate('restaurant')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">🍽️</div>
@@ -650,11 +687,11 @@
         <div class="card-desc">Vi finder det sted der passer stemningen — fra hyggelig bistro til street food. Froggy's til burgere, Amy's til det klassiske, Kok & Vin til fransk hygge eller Hanzo til asiatisk flair.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr1"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c2">
+    <div class="date-card c2" onclick="triggerDate('Søndagsbrunch — Odense midtby','🥂')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">🥂</div>
@@ -663,11 +700,11 @@
         <div class="card-desc">Afslappet og hyggelig — god kaffe, sprødt brød og lange samtaler. Den perfekte undskyldning til at blive siddende lidt for længe.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr2"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c3">
+    <div class="date-card c3" onclick="triggerDate('Biograf & popcorn — Cinemaxx Odense','🎬')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">🎬</div>
@@ -676,11 +713,11 @@
         <div class="card-desc">En god film, mørkt biografrum og en undskyldning til at sidde tæt. Klassisk date — fordi det virker.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr3"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c4">
+    <div class="date-card c4" onclick="triggerDate('Zoo-dag — Odense Zoo','🦒')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">🦒</div>
@@ -689,11 +726,11 @@
         <div class="card-desc">Hvem siger zoo kun er for børn? Vi vandrer rundt, griner af giraffer og finder ud af hvem der er mest vild med pingvinerne.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr4"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c5">
+    <div class="date-card c5" onclick="triggerDate('Live koncert — Posten Odense','🎸')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">🎸</div>
@@ -702,11 +739,11 @@
         <div class="card-desc">Livemusik, en kold øl og den bedste undskyldning til at stå tæt. Musik skaber en stemning, ingen restaurant kan matche.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr5"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c6">
+    <div class="date-card c6" onclick="triggerDate('Kajaktur — Odense Å','🛶')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">🛶</div>
@@ -715,11 +752,11 @@
         <div class="card-desc">Rolig paddletur langs åen — frisk luft, smuk natur og to mennesker der finder ud af om de kan samarbejde. Spoiler: det kan vi.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr6"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c7">
+    <div class="date-card c7" onclick="triggerDate('Kaffe & marked — Odense midtby','☕')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">☕</div>
@@ -728,11 +765,11 @@
         <div class="card-desc">Lav-key og afslappet — god kaffe, fine fund og ægte samtaler uden forventninger. Det bedste sted at se hvem man egentlig er.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr7"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c8">
+    <div class="date-card c8" onclick="triggerDate('Bowling & cocktails — Strike Odense','🎳')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">🎳</div>
@@ -741,11 +778,11 @@
         <div class="card-desc">Konkurrencen er på — hvem vinder? Taberen køber næste runde. Afslappet, sjovt og der er altid noget at grine ad.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr8"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c2">
+    <div class="date-card c2" onclick="triggerDate('Klatring — Gravity Odense','🧗')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">🧗</div>
@@ -754,11 +791,11 @@
         <div class="card-desc">Bouldering for begyndere — ingen erfaring nødvendig. Gode arme, grin og måske lidt hjælp til at komme op. 😏</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr9"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
-    <div class="date-card c3">
+    <div class="date-card c3" onclick="triggerDate('Danseaften — Odense','💃')">
       <div class="card-top"></div>
       <div class="card-body">
         <div class="card-emoji-wrap">💃</div>
@@ -767,7 +804,7 @@
         <div class="card-desc">Salsa, bachata eller swing — vi beslutter sammen. Tæt, rytmisk og en fantastisk undskyldning til at holde hinanden i hænderne.</div>
         <div class="card-date-tag">📅 Dato aftales sammen</div><br>
         <div class="qr-box" id="qr10"></div>
-        <div class="scan-hint">Scan · Accepter · Date</div>
+        <div class="scan-hint">Tryk på kortet · Scan QR · Accepter</div>
       </div>
     </div>
 
@@ -807,8 +844,8 @@
 
     #print-page {
       font-family: 'Syne', Arial, sans-serif;
-      width: 210mm;
-      min-height: 297mm;
+      width: 100%;
+      height: 100vh;
       background: #fff8f0;
       color: #1a1a1a;
       padding: 0;
@@ -1146,7 +1183,7 @@
       <div class="rov-choose">Vælg dette sted →</div>
     </div>
   </div>
-  <button class="btn-no" style="margin-top:20px" onclick="window.location.hash='';document.getElementById('rov').classList.remove('show')">← Tilbage</button>
+  <button class="btn-no" style="margin-top:20px" onclick="document.getElementById('rov').classList.remove('show')">← Tilbage</button>
 </div>
 
 <!-- ── ACCEPT OVERLAY ── -->
@@ -1155,8 +1192,18 @@
   <div class="ov-em" id="ov-em">💘</div>
   <div class="ov-ttl">Tør du sige ja?</div>
   <div class="ov-act" id="ov-act"></div>
-  <div class="ov-sub">Skriv dit fornavn og accepter din blind date. Vi finder en dato der passer os begge. 🌹</div>
+  <div class="ov-sub">Udfyld dit navn og nummer — så finder vi en dato der passer os begge. 🌹</div>
   <input id="navn-input" type="text" placeholder="Dit fornavn..." maxlength="30" autocomplete="off" />
+  <input id="tlf-input" type="tel" placeholder="Dit telefonnummer..." maxlength="20" autocomplete="off" style="
+    background:rgba(255,255,255,0.07);
+    border:1.5px solid rgba(253,41,123,0.25);
+    border-radius:50px; color:#fff;
+    font-family:'Nunito',sans-serif; font-size:1rem; font-weight:600;
+    padding:14px 30px; text-align:center; outline:none;
+    width:270px; margin-bottom:10px; display:block;
+    transition:border-color .2s, box-shadow .2s;
+  " onfocus="this.style.borderColor='#fd297b';this.style.boxShadow='0 0 0 3px rgba(253,41,123,0.15)'"
+     onblur="this.style.borderColor='rgba(253,41,123,0.25)';this.style.boxShadow='none'" />
   <div id="navn-fejl"></div>
   <button class="btn-yes" id="btn-yes">Ja, jeg tager chancen 🔥</button>
   <button class="btn-no" id="btn-no">Måske en anden gang</button>
@@ -1199,7 +1246,20 @@ acts.forEach(a => {
   }
 });
 
-// Choose restaurant — click-based, no QR needed
+// Trigger date directly by clicking card
+function triggerDate(nameOrFlag, emoji) {
+  if (nameOrFlag === 'restaurant') {
+    document.getElementById('ov').classList.remove('show');
+    document.getElementById('rov').classList.add('show');
+    return;
+  }
+  window._chosenRestaurant = nameOrFlag;
+  window._chosenEmoji = emoji;
+  document.getElementById('ov-em').textContent  = emoji || "💘";
+  document.getElementById('ov-act').textContent = nameOrFlag || "";
+  document.getElementById('rov').classList.remove('show');
+  document.getElementById('ov').classList.add('show');
+}
 function chooseRestaurant(name, emoji) {
   document.getElementById('rov').classList.remove('show');
   document.getElementById('ov-em').textContent  = emoji;
@@ -1219,33 +1279,50 @@ new QRCode(document.getElementById('qr-print'), {
 
 function checkHash() {
   const h = window.location.hash;
-  document.getElementById('ov').classList.remove('show');
-  document.getElementById('rov').classList.remove('show');
 
   if (h.startsWith("#restaurant=")) {
-    // Restaurant sub-selector overlay
+    document.getElementById('ov').classList.remove('show');
     document.getElementById('rov').classList.add('show');
     return;
   }
 
-  if (!h.startsWith("#date=")) return;
-  try {
-    const d = JSON.parse(decodeURIComponent(escape(atob(h.replace("#date=","")))));
-    document.getElementById('ov-em').textContent  = d.e || "💘";
-    document.getElementById('ov-act').textContent = d.n  || "";
-    document.getElementById('ov').classList.add('show');
-  } catch(e) {}
+  if (h.startsWith("#date=")) {
+    try {
+      const d = JSON.parse(decodeURIComponent(escape(atob(h.replace("#date=","")))));
+      window._chosenRestaurant = d.n;
+      window._chosenEmoji = d.e;
+      document.getElementById('ov-em').textContent  = d.e || "💘";
+      document.getElementById('ov-act').textContent = d.n  || "";
+      document.getElementById('rov').classList.remove('show');
+      document.getElementById('ov').classList.add('show');
+    } catch(e) {}
+    return;
+  }
+
+  // Only close overlays if hash is empty/irrelevant
+  if (!h || h === '#') {
+    document.getElementById('ov').classList.remove('show');
+    document.getElementById('rov').classList.remove('show');
+  }
 }
 
 document.getElementById('btn-yes').addEventListener('click', () => {
   const navn = document.getElementById('navn-input').value.trim();
+  const tlf  = document.getElementById('tlf-input').value.trim();
   const fejl = document.getElementById('navn-fejl');
+
   if (!navn) {
     fejl.textContent = "Skriv venligst dit fornavn først 🌸";
     document.getElementById('navn-input').focus();
     return;
   }
+  if (!tlf) {
+    fejl.textContent = "Skriv venligst dit telefonnummer 📱";
+    document.getElementById('tlf-input').focus();
+    return;
+  }
   fejl.textContent = "";
+
   let name = window._chosenRestaurant || "en date";
   let emoji = window._chosenEmoji || "";
   if (!window._chosenRestaurant) {
@@ -1255,12 +1332,24 @@ document.getElementById('btn-yes').addEventListener('click', () => {
     } catch(e){}
   }
   window._chosenRestaurant = null;
-  const msg = "Hej! Jeg hedder " + navn + " og accepterer din DareDate-invitation! 🎉 Jeg valgte: " + name + ". Glæder mig til at høre fra dig! 🌹";
-  window.location.href = "sms:+" + _ph + "?body=" + encodeURIComponent(msg);
+
+  const msg = "Hej! Jeg hedder " + navn + " og accepterer din DareDate-invitation! 🎉 Jeg valgte: " + name + ". Mit nummer er: " + tlf + ". Glæder mig til at høre fra dig! 🌹";
+
+  // SMS på mobil, email på desktop
+  const isMobile = /iPhone|Android|iPad|Mobile/i.test(navigator.userAgent);
+  if (isMobile) {
+    window.location.href = "sms:+" + _ph + "?body=" + encodeURIComponent(msg);
+  } else {
+    // Email — encode mail til din adresse uden at vise den direkte
+    const _em = [115,111,110,110,121,57,56,55,64,104,111,116,109,97,105,108,46,99,111,109].map(c=>String.fromCharCode(c)).join('');
+    const subject = encodeURIComponent("DareDate accept fra " + navn + " 🔥");
+    window.location.href = "mailto:" + _em + "?subject=" + subject + "&body=" + encodeURIComponent(msg);
+  }
+
   setTimeout(() => {
     document.getElementById('ov').innerHTML = `
       <div style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;letter-spacing:4px;background:linear-gradient(135deg,#fd297b,#ff5864,#f77f00,#fcb045);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:24px;">DareDate</div>
-      <div style="font-size:3.5rem;margin-bottom:20px;animation:pop .4s cubic-bezier(.34,1.56,.64,1) both">🎊</div>
+      <div style="font-size:3.5rem;margin-bottom:20px;">🎊</div>
       <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;background:linear-gradient(135deg,#fd297b,#fcb045);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;">Det sker, ${navn}!</div>
       <div style="font-size:.95rem;color:rgba(255,255,255,.45);line-height:1.8;max-width:300px;">Din besked er på vej. Vi ses snart! 🌹</div>
     `;
@@ -1268,10 +1357,12 @@ document.getElementById('btn-yes').addEventListener('click', () => {
 });
 
 document.getElementById('btn-no').addEventListener('click', () => {
-  window.location.hash = '';
   document.getElementById('ov').classList.remove('show');
   document.getElementById('navn-input').value = '';
+  document.getElementById('tlf-input').value = '';
   document.getElementById('navn-fejl').textContent = '';
+  window._chosenRestaurant = null;
+  if (window.location.hash) window.location.hash = '';
 });
 
 // Admin mode — vis print-sektion kun ved ?admin i URL
