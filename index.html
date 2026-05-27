@@ -560,21 +560,12 @@
   .print-btn:hover { transform: scale(1.04); box-shadow: 0 10px 34px rgba(253,41,123,0.5); }
 
   /* ══════════════════════════════════════
-     PRINT — fylder hele arket A4 og A3
+     PRINT — præcis én side A4 og A3
   ══════════════════════════════════════ */
   @media print {
-    @page { size: auto; margin: 0mm; }
+    @page { size: A4 portrait; margin: 0; }
 
-    html {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-    }
-
-    body {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%;
-      background: white;
-    }
+    html, body { margin: 0; padding: 0; background: white; }
 
     /* Skjul ALT undtagen print-siden */
     .bg-mesh, .floating-heart, .hero, .section,
@@ -582,38 +573,10 @@
 
     #print-page {
       display: flex !important;
-      flex-direction: column;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
+      width: 210mm;
+      min-height: 297mm;
       page-break-after: avoid;
-      break-after: avoid;
-    }
-
-    #print-page .pp-grid {
-      flex: 1;
-      align-content: stretch;
-      align-items: stretch;
-      min-height: 0;
-    }
-
-    #print-page .pp-card {
-      display: flex;
-      flex-direction: column;
-    }
-
-    #print-page .pp-card-inner {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #print-page .pp-desc {
-      flex: 1;
+      overflow: hidden;
     }
   }
     from { opacity:0; transform:translateY(-20px); }
@@ -844,8 +807,8 @@
 
     #print-page {
       font-family: 'Syne', Arial, sans-serif;
-      width: 100%;
-      height: 100vh;
+      width: 210mm;
+      min-height: 297mm;
       background: #fff8f0;
       color: #1a1a1a;
       padding: 0;
